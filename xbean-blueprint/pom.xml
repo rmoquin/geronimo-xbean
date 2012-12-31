@@ -53,6 +53,12 @@
             <version>1.0.0</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.aries.blueprint</groupId>
+            <artifactId>org.apache.aries.blueprint.core</artifactId>
+            <version>1.0.1</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -156,9 +162,9 @@
                                         <path refid="maven.runtime.classpath" />
                                     </classpath>
                                 </taskdef>
-                                <mapping namespace="http://xbean.apache.org/schemas/pizza" srcdir="src/test/java" destFile="target/restaurant.xsd" metaInfDir="${basedir}/target/test-classes/" />
+                                <mapping namespace="http://xbean.apache.org/schemas/pizza" srcdir="src/test/java" destFile="target/test-classes/restaurant.xsd" metaInfDir="${basedir}/target/test-classes/" />
                                 <!--<copy todir="${basedir}/target/test-classes">-->
-                                    <!--<fileset dir="${basedir}/target/test-generated" />-->
+                                <!--<fileset dir="${basedir}/target/test-generated" />-->
                                 <!--</copy>-->
                             </tasks>
                         </configuration>

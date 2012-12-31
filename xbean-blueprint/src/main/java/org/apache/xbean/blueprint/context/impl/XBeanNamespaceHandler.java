@@ -103,11 +103,16 @@ public class XBeanNamespaceHandler implements NamespaceHandler {
         Properties properties = new Properties();
         try {
             properties.load(in);
+            LOGGER.info("Successfully loaded schema properties from: " + propertiesLocation);
+        } catch(Exception ex) {
+          LOGGER.debug("Failed to load schema properties from: " + propertiesLocation, ex);
+          throw new RuntimeException(ex);
         } finally {
             in.close();
         }
         this.namespace = namespace;
         this.schemaLocation = bundle.getEntry(schemaLocation);
+        LOGGER.info("Loaded schema location, " + schemaLocation + ": " + this.schemaLocation);
         this.managedClasses = managedClassesFromProperties(bundle, properties);
         managedClassesByName = mapClasses(managedClasses);
         propertyEditors = propertyEditorsFromProperties(bundle, properties);
@@ -336,8 +341,8 @@ public class XBeanNamespaceHandler implements NamespaceHandler {
             if (node instanceof Element) {
                 Element child = (Element) node;
                 String childName = child.getLocalName();
-                String namespace = child.getNamespaceURI();
-                if (!this.namespace.equals(namespace)) {
+                String cn = child.getNamespaceURI();
+                if (!this.namespace.equals(cn)) {
                     BeanProperty prop = parserContext.parseElement(BeanProperty.class, beanMetadata, child);
                     beanMetadata.addProperty(prop);
                     continue;
