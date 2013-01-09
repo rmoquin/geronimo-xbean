@@ -250,12 +250,12 @@ public class XBeanMojo extends AbstractMojo implements LogFacade {
             Set<URL> urls = new HashSet<URL>();
 
             URL mainClasses = new File(project.getBuild().getOutputDirectory())
-                    .toURL();
+                    .toURI().toURL();
             getLog().debug("Adding to classpath : " + mainClasses);
             urls.add(mainClasses);
 
             URL testClasses = new File(project.getBuild()
-                    .getTestOutputDirectory()).toURL();
+                    .getTestOutputDirectory()).toURI().toURL();
             getLog().debug("Adding to classpath : " + testClasses);
             urls.add(testClasses);
 
@@ -265,12 +265,12 @@ public class XBeanMojo extends AbstractMojo implements LogFacade {
                 getLog().debug(
                         "Adding artifact: " + classPathElement.getFile()
                                 + " to classpath");
-                urls.add(classPathElement.getFile().toURL());
+                urls.add(classPathElement.getFile().toURI().toURL());
             }
 
             if( classPathIncludes!=null ) {
                 for (String include : classPathIncludes) {
-                    final URL url = new File(include).toURL();
+                    final URL url = new File(include).toURI().toURL();
                     getLog().debug("Adding to classpath : " + url);
                     urls.add(url);
                 }
