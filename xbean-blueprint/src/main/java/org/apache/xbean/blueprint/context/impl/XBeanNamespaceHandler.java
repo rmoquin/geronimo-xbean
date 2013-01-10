@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -80,7 +81,7 @@ public class XBeanNamespaceHandler implements NamespaceHandler {
     private static final String BEAN_REFERENCE_PREFIX = "#";
     private static final String NULL_REFERENCE = "#null";
 
-    private final String namespace;
+    private String namespace;
     private final URL schemaLocation;
     private final Set<Class> managedClasses;
     private final MappingMetaData mappingMetaData;
@@ -111,7 +112,8 @@ public class XBeanNamespaceHandler implements NamespaceHandler {
             in.close();
         }
         this.namespace = namespace;
-        this.schemaLocation = bundle.getEntry(schemaLocation);
+        Enumeration<URL> e = bundle.findEntries("/", "*.xsd", false);
+        this.schemaLocation = e.nextElement();
         LOGGER.info("Loaded schema location, " + schemaLocation + ": " + this.schemaLocation);
         this.managedClasses = managedClassesFromProperties(bundle, properties);
         managedClassesByName = mapClasses(managedClasses);

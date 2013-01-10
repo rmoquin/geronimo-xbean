@@ -29,6 +29,7 @@
         <version>3.13-SNAPSHOT</version>
     </parent>
 
+	<groupId>com.rmoquin.xbean</groupId>
     <artifactId>xbean-blueprint</artifactId>
     <packaging>bundle</packaging>
     <name>Apache XBean :: OSGI Blueprint Namespace Handler</name>
