@@ -26,6 +26,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -81,8 +82,8 @@ public class XBeanNamespaceHandler implements NamespaceHandler {
     private static final String BEAN_REFERENCE_PREFIX = "#";
     private static final String NULL_REFERENCE = "#null";
 
-    private String namespace;
-    private final URL schemaLocation;
+    private final String namespace;
+    private URL schemaLocation;
     private final Set<Class> managedClasses;
     private final MappingMetaData mappingMetaData;
     private final Map<String, Class> managedClassesByName;
@@ -106,14 +107,25 @@ public class XBeanNamespaceHandler implements NamespaceHandler {
             properties.load(in);
             LOGGER.info("Successfully loaded schema properties from: " + propertiesLocation);
         } catch(Exception ex) {
-          LOGGER.debug("Failed to load schema properties from: " + propertiesLocation, ex);
-          throw new RuntimeException(ex);
+            LOGGER.debug("Failed to load schema properties from: " + propertiesLocation, ex);
+            throw new RuntimeException(ex);
         } finally {
             in.close();
         }
         this.namespace = namespace;
-        Enumeration<URL> e = bundle.findEntries("/", "*.xsd", false);
-        this.schemaLocation = e.nextElement();
+        //Use to do simple parsing on the path passed in
+        
+        String path = "/";
+        String xsd = schemaLocation;
+        int index = schemaLocation.lastIndexOf("/");
+        if(index > 0){
+            path = schemaLocation.substring(0, index);
+            xsd = schemaLocation.substring(index + 1);
+        }
+        Enumeration<URL> e = bundle.findEntries(path, xsd, false);
+        if(e.hasMoreElements()) {
+          this.schemaLocation = e.nextElement();
+        }
         LOGGER.info("Loaded schema location, " + schemaLocation + ": " + this.schemaLocation);
         this.managedClasses = managedClassesFromProperties(bundle, properties);
         managedClassesByName = mapClasses(managedClasses);

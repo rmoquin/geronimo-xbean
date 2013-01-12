@@ -31,14 +31,16 @@ import java.util.List;
 public class XsdGenerator implements GeneratorPlugin {
     private final File destFile;
     private LogFacade log;
+    private boolean strictOrder;
 
-    public XsdGenerator(File destFile) {
+    public XsdGenerator(File destFile, boolean strictOrder) {
         this.destFile = destFile;
     }
 
     public void generate(NamespaceMapping namespaceMapping) throws IOException {
         // TODO can only handle 1 schema document so far...
         File file = destFile;
+        file.getParentFile().mkdirs();
         log.log("Generating XSD file: " + file + " for namespace: " + namespaceMapping.getNamespace());
         PrintWriter out = new PrintWriter(new FileWriter(file));
         try {
@@ -92,7 +94,11 @@ public class XsdGenerator implements GeneratorPlugin {
             }
         }
         if (complexCount > 0) {
-            out.println("      <xs:sequence>");
+          if(strictOrder){
+                out.println("      <xs:sequence>");
+            } else {
+                out.println("      <xs:choice minOccurs=\"0\" maxOccurs=\"unbounded\"><xs:choice>");
+            }
             for (Iterator iterator = element.getAttributes().iterator(); iterator.hasNext();) {
                 AttributeMapping attributeMapping = (AttributeMapping) iterator.next();
                 if (!namespaceMapping.isSimpleType(attributeMapping.getType())) {
@@ -100,7 +106,11 @@ public class XsdGenerator implements GeneratorPlugin {
                 }
             }
             out.println("        <xs:any namespace='##other' minOccurs='0' maxOccurs='unbounded' processContents='lax'/>");
-            out.println("      </xs:sequence>");
+            if(strictOrder){
+                out.println("      </xs:sequence>");
+            } else {
+                out.println("      </xs:choice></xs:choice>");
+            }
         }
 
         for (Iterator iterator = element.getAttributes().iterator(); iterator.hasNext();) {
